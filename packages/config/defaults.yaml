@@ -1,0 +1,8 @@
+﻿apiGatewayUrl: http://localhost:8080
+observability:
+  tracing: true
+  logs: json
+security:
+  rbacEnabled: true
+  tenantIsolation: strict
+

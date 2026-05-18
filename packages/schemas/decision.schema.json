@@ -1,0 +1,11 @@
+﻿{
+  "type": "object",
+  "required": ["title", "description"],
+  "properties": {
+    "title": {"type": "string"},
+    "description": {"type": "string"},
+    "impact_level": {"type": "string"},
+    "risk_level": {"type": "string"}
+  }
+}
+

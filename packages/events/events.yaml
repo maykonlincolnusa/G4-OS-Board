@@ -1,0 +1,16 @@
+﻿events:
+  - document.uploaded
+  - document.indexed
+  - meeting.created
+  - meeting.transcribed
+  - meeting.summarized
+  - decision.created
+  - action.created
+  - action.overdue
+  - risk.detected
+  - approval.requested
+  - approval.approved
+  - channel.message.received
+  - boardpack.generated
+  - agent.run.completed
+

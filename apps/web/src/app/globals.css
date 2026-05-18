@@ -1,0 +1,29 @@
+﻿@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap");
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+body {
+  @apply bg-bg text-ink font-sans;
+}
+
+.panel {
+  @apply rounded-xl border border-line bg-panel shadow-sm;
+}
+
+.badge-risk-high {
+  @apply inline-flex items-center rounded-full bg-red-100 px-2 py-1 text-xs font-semibold text-red-700;
+}
+
+.badge-risk-medium {
+  @apply inline-flex items-center rounded-full bg-amber-100 px-2 py-1 text-xs font-semibold text-amber-700;
+}
+
+.badge-risk-low {
+  @apply inline-flex items-center rounded-full bg-emerald-100 px-2 py-1 text-xs font-semibold text-emerald-700;
+}
+

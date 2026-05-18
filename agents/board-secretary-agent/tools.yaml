@@ -1,0 +1,11 @@
+﻿agent: board-secretary-agent
+allowed_tools:
+  - rag.search
+  - kpi.fetch
+  - decision.memory.query
+  - risk.evaluate
+  - audit.log
+forbidden_tools:
+  - tenant.switch
+  - permission.override
+

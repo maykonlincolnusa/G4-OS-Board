@@ -1,0 +1,145 @@
+﻿version: "3.9"
+
+x-python-service: &python-service
+  env_file:
+    - ../../.env
+  depends_on:
+    - postgres
+    - redis
+
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: board-postgres
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-board_os}
+      POSTGRES_USER: ${POSTGRES_USER:-board_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-board_pass}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ../../database/migrations:/docker-entrypoint-initdb.d
+
+  redis:
+    image: redis:7-alpine
+    container_name: board-redis
+    ports:
+      - "6379:6379"
+
+  api-gateway:
+    build:
+      context: ../../apps/api-gateway
+    container_name: board-api-gateway
+    env_file:
+      - ../../.env
+    ports:
+      - "8080:8080"
+
+  web:
+    build:
+      context: ../../apps/web
+    container_name: board-web
+    ports:
+      - "3000:3000"
+    depends_on:
+      - api-gateway
+
+  admin:
+    build:
+      context: ../../apps/admin
+    container_name: board-admin
+    ports:
+      - "3001:3001"
+
+  auth-service:
+    <<: *python-service
+    build: { context: ../../services/auth-service }
+    ports: ["8101:8000"]
+  tenant-service:
+    <<: *python-service
+    build: { context: ../../services/tenant-service }
+    ports: ["8102:8000"]
+  user-service:
+    <<: *python-service
+    build: { context: ../../services/user-service }
+    ports: ["8103:8000"]
+  board-service:
+    <<: *python-service
+    build: { context: ../../services/board-service }
+    ports: ["8104:8000"]
+  meeting-service:
+    <<: *python-service
+    build: { context: ../../services/meeting-service }
+    ports: ["8105:8000"]
+  decision-memory-service:
+    <<: *python-service
+    build: { context: ../../services/decision-memory-service }
+    ports: ["8106:8000"]
+  action-tracker-service:
+    <<: *python-service
+    build: { context: ../../services/action-tracker-service }
+    ports: ["8107:8000"]
+  document-intelligence-service:
+    <<: *python-service
+    build: { context: ../../services/document-intelligence-service }
+    ports: ["8108:8000"]
+  rag-service:
+    <<: *python-service
+    build: { context: ../../services/rag-service }
+    ports: ["8109:8000"]
+  agent-orchestrator-service:
+    <<: *python-service
+    build: { context: ../../services/agent-orchestrator-service }
+    ports: ["8110:8000"]
+  agent-registry-service:
+    <<: *python-service
+    build: { context: ../../services/agent-registry-service }
+    ports: ["8111:8000"]
+  skills-playbook-service:
+    <<: *python-service
+    build: { context: ../../services/skills-playbook-service }
+    ports: ["8112:8000"]
+  risk-compliance-service:
+    <<: *python-service
+    build: { context: ../../services/risk-compliance-service }
+    ports: ["8113:8000"]
+  approval-workflow-service:
+    <<: *python-service
+    build: { context: ../../services/approval-workflow-service }
+    ports: ["8114:8000"]
+  channel-governance-service:
+    <<: *python-service
+    build: { context: ../../services/channel-governance-service }
+    ports: ["8115:8000"]
+  notification-service:
+    <<: *python-service
+    build: { context: ../../services/notification-service }
+    ports: ["8116:8000"]
+  analytics-kpi-service:
+    <<: *python-service
+    build: { context: ../../services/analytics-kpi-service }
+    ports: ["8117:8000"]
+  audit-ledger-service:
+    <<: *python-service
+    build: { context: ../../services/audit-ledger-service }
+    ports: ["8118:8000"]
+  board-pack-generator-service:
+    <<: *python-service
+    build: { context: ../../services/board-pack-generator-service }
+    ports: ["8119:8000"]
+  integration-service:
+    <<: *python-service
+    build: { context: ../../services/integration-service }
+    ports: ["8120:8000"]
+  billing-service:
+    <<: *python-service
+    build: { context: ../../services/billing-service }
+    ports: ["8121:8000"]
+  admin-ops-service:
+    <<: *python-service
+    build: { context: ../../services/admin-ops-service }
+    ports: ["8122:8000"]
+
+volumes:
+  postgres_data:
