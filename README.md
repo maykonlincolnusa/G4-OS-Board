@@ -14,7 +14,8 @@ Uma plataforma SaaS B2B multi-tenant que centraliza governança, memória de dec
 - Monorepo modular por domínio (`apps`, `services`, `agents`, `packages`, `database`, `infra`, `docs`, `tests`).
 - Microsserviços em FastAPI (Python 3.12+).
 - Frontend Next.js 15 + TypeScript + Tailwind.
-- PostgreSQL + pgvector, Redis e event backbone.
+- Banco multi-cloud preparado para AWS/GCP/Azure via seleção de provider em env.
+- PostgreSQL + pgvector (recomendado), Redis e event backbone.
 - LangGraph para orquestração de agentes.
 
 ## 4. Estrutura do Repositório
@@ -80,7 +81,8 @@ Agentes iniciais incluídos:
 ## 7. Stack
 - Frontend: Next.js 15, React, TypeScript, Tailwind
 - Backend: FastAPI, Python 3.12+
-- Banco: PostgreSQL + pgvector
+- Persistência: SQLAlchemy 2.0 + Alembic
+- Banco: PostgreSQL + pgvector (default), com URLs dedicadas para AWS/GCP/Azure
 - Cache/Eventos MVP: Redis
 - IA: OpenAI API (com fallback), LangGraph
 - Observabilidade: logs JSON, OpenTelemetry-ready, LangSmith-ready
@@ -92,20 +94,35 @@ Agentes iniciais incluídos:
 ```bash
 docker compose -f infra/docker/docker-compose.yml up --build
 ```
-3. Aplicar migrations/seeds (se necessário manualmente):
+3. Aplicar migration Alembic (core priority tables):
 ```bash
-psql -h localhost -U board_user -d board_os -f database/migrations/001_init.sql
+pip install -r database/requirements.txt
+alembic upgrade head
+```
+4. (Opcional) aplicar seed SQL de demonstração:
+```bash
 psql -h localhost -U board_user -d board_os -f database/seeds/001_seed.sql
 ```
-4. Abrir apps:
+5. Abrir apps:
 - Web: `http://localhost:3000`
 - API Gateway: `http://localhost:8080`
 
 ## 9. Variáveis de Ambiente
 Ver `.env.example` e os `.env.example` de cada serviço.
 
+Campos principais para banco multi-cloud:
+- `DATABASE_PROVIDER=local|aws|gcp|azure`
+- `DATABASE_URL`
+- `AWS_DATABASE_URL`
+- `GCP_DATABASE_URL`
+- `AZURE_DATABASE_URL`
+
 ## 10. Migrations e Seeds
-- Migration inicial: `database/migrations/001_init.sql`
+- Migration SQL legada: `database/migrations/001_init.sql`
+- Alembic (ativo para evolução):
+  - `alembic.ini`
+  - `database/alembic/env.py`
+  - `database/alembic/versions/20260518_0001_core_priority_tables.py`
 - Seeds fictícios: `database/seeds/001_seed.sql`
 
 ## 11. Testes
@@ -119,18 +136,18 @@ pytest services/action-tracker-service/app/tests
 ```
 
 ## 12. MVP Entregue nesta Base
-- Auth JWT básico
-- Tenant isolation por header
+- Auth JWT básico com persistência SQL (`auth-service`)
+- Tenant isolation por header com lookup em banco (`tenant-service`)
 - Upload/ingestão de documentos
 - RAG inicial com citações
-- Board AI chat (via orchestrator)
-- Meetings + sumarização base
-- Decision memory
-- Action tracker
-- Risk center
+- Board AI chat integrado ao gateway/orquestrador com streaming SSE e citações renderizadas
+- Meetings persistidos em banco
+- Decision memory persistido em banco
+- Action tracker persistido em banco
+- Risk center persistido em banco
 - Board pack generator (Markdown + contratos para PDF/PPTX/DOCX/XLSX)
 - Dashboard executivo inicial
-- Audit logs básicos
+- Audit logs persistidos em banco
 - Seeds de cenário corporativo
 
 ## 13. Segurança
@@ -203,4 +220,3 @@ Placeholders:
 
 ## 20. Licença
 MIT.
-

@@ -1,4 +1,5 @@
 ﻿import asyncio
+import json
 import os
 import uuid
 import httpx
@@ -56,11 +57,7 @@ async def executive_question_stream(payload: dict[str, Any], tenant_id: str) -> 
     citations = result.get("citations", [])
     confidence = result.get("confidence_score", 0.0)
     yield "event: done\n"
-    yield (
-        "data: "
-        + str({"citations": citations, "confidence_score": confidence}).replace("'", '"')
-        + "\n\n"
-    )
+    yield "data: " + json.dumps({"citations": citations, "confidence_score": confidence}) + "\n\n"
 
 
 def build_board_pack(payload: dict[str, Any]) -> dict[str, Any]:

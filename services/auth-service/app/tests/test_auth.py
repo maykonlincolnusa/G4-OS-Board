@@ -1,4 +1,10 @@
-﻿import os
+﻿import sys
+from pathlib import Path
+
+SERVICE_ROOT = Path(__file__).resolve().parents[2]
+if str(SERVICE_ROOT) not in sys.path:
+    sys.path.insert(0, str(SERVICE_ROOT))
+import os
 from pathlib import Path
 
 DB_FILE = Path("./test_auth.db")
@@ -33,3 +39,4 @@ def test_login_success() -> None:
     response = client.post("/api/v1/login", json={"email": "ceo@novaboard.ai", "password": "123456"})
     assert response.status_code == 200
     assert "access_token" in response.json()
+
